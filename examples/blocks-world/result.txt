@@ -1,0 +1,173 @@
+( define ( domain Blocks4 )
+  ( :requirements :strips :typing :equality :htn )
+  ( :types block )
+  ( :predicates
+    ( ON-TABLE ?b - BLOCK )
+    ( ON ?b1 - BLOCK ?b2 - BLOCK )
+    ( CLEAR ?b - BLOCK )
+    ( HAND-EMPTY )
+    ( HOLDING ?b - BLOCK )
+  )
+  ( :action !PICKUP
+    :parameters
+    (
+      ?b - BLOCK
+    )
+    :precondition
+    ( and ( ON-TABLE ?b ) ( CLEAR ?b ) ( HAND-EMPTY ) )
+    :effect
+    ( and ( not ( ON-TABLE ?b ) ) ( not ( CLEAR ?b ) ) ( not ( HAND-EMPTY ) ) ( HOLDING ?b ) )
+  )
+  ( :action !PUTDOWN
+    :parameters
+    (
+      ?b - BLOCK
+    )
+    :precondition
+    ( and ( HOLDING ?b ) )
+    :effect
+    ( and ( not ( HOLDING ?b ) ) ( HAND-EMPTY ) ( ON-TABLE ?b ) ( CLEAR ?b ) )
+  )
+  ( :action !UNSTACK
+    :parameters
+    (
+      ?b1 - BLOCK
+      ?b2 - BLOCK
+    )
+    :precondition
+    ( and ( ON ?b1 ?b2 ) ( CLEAR ?b1 ) ( HAND-EMPTY ) )
+    :effect
+    ( and ( not ( ON ?b1 ?b2 ) ) ( not ( CLEAR ?b1 ) ) ( not ( HAND-EMPTY ) ) ( CLEAR ?b2 ) ( HOLDING ?b1 ) )
+  )
+  ( :action !STACK
+    :parameters
+    (
+      ?b1 - BLOCK
+      ?b2 - BLOCK
+    )
+    :precondition
+    ( and ( HOLDING ?b1 ) ( CLEAR ?b2 ) )
+    :effect
+    ( and ( not ( HOLDING ?b1 ) ) ( not ( CLEAR ?b2 ) ) ( HAND-EMPTY ) ( ON ?b1 ?b2 ) ( CLEAR ?b1 ) )
+  )
+  ( :method MAKE-ON-TABLE
+    :parameters
+    (
+      ?goal - BLOCK
+    )
+    :precondition
+    ( and ( ON-TABLE ?goal ) )
+    :subtasks
+    (  )
+  )
+
+  ( :method MAKE-ON
+    :parameters
+    (
+      ?top - BLOCK
+      ?bottom - BLOCK
+    )
+    :precondition
+    ( and ( ON ?top ?bottom ) )
+    :subtasks
+    (  )
+  )
+
+  ( :method MAKE-CLEAR
+    :parameters
+    (
+      ?auto_1 - BLOCK
+    )
+    :vars
+    (
+      ?auto_2 - BLOCK
+    )
+    :precondition
+    ( and ( ON ?auto_2 ?auto_1 ) ( CLEAR ?auto_2 ) ( HAND-EMPTY ) )
+    :subtasks
+    ( ( !UNSTACK ?auto_2 ?auto_1 ) )
+  )
+
+  ( :method MAKE-CLEAR
+    :parameters
+    (
+      ?auto_5 - BLOCK
+    )
+    :precondition
+    ( and ( HOLDING ?auto_5 ) )
+    :subtasks
+    ( ( !PUTDOWN ?auto_5 ) )
+  )
+
+  ( :method MAKE-CLEAR
+    :parameters
+    (
+      ?auto_15 - BLOCK
+    )
+    :vars
+    (
+      ?auto_16 - BLOCK
+      ?auto_18 - BLOCK
+    )
+    :precondition
+    ( and ( ON ?auto_16 ?auto_15 ) ( CLEAR ?auto_16 ) ( HOLDING ?auto_18 ) )
+    :subtasks
+    ( ( !PUTDOWN ?auto_18 )
+      ( MAKE-CLEAR ?auto_15 ) )
+  )
+
+  ( :method MAKE-CLEAR
+    :parameters
+    (
+      ?auto_19 - BLOCK
+    )
+    :vars
+    (
+      ?auto_22 - BLOCK
+      ?auto_20 - BLOCK
+    )
+    :precondition
+    ( and ( ON ?auto_22 ?auto_19 ) ( ON ?auto_20 ?auto_22 ) ( CLEAR ?auto_20 ) ( HAND-EMPTY ) )
+    :subtasks
+    ( ( MAKE-CLEAR ?auto_22 )
+      ( MAKE-CLEAR ?auto_19 ) )
+  )
+
+  ( :method MAKE-CLEAR
+    :parameters
+    (
+      ?auto_52 - BLOCK
+    )
+    :vars
+    (
+      ?auto_55 - BLOCK
+      ?auto_54 - BLOCK
+      ?auto_56 - BLOCK
+    )
+    :precondition
+    ( and ( ON ?auto_55 ?auto_52 ) ( ON ?auto_54 ?auto_55 ) ( CLEAR ?auto_54 ) ( HOLDING ?auto_56 ) )
+    :subtasks
+    ( ( !PUTDOWN ?auto_56 )
+      ( MAKE-CLEAR ?auto_52 ) )
+  )
+
+  ( :method MAKE-CLEAR
+    :parameters
+    (
+      ?auto_57 - BLOCK
+    )
+    :vars
+    (
+      ?auto_61 - BLOCK
+      ?auto_58 - BLOCK
+      ?auto_59 - BLOCK
+    )
+    :precondition
+    ( and ( ON ?auto_61 ?auto_57 ) ( ON ?auto_58 ?auto_61 ) ( ON ?auto_59 ?auto_58 ) ( CLEAR ?auto_59 ) ( HAND-EMPTY ) )
+    :subtasks
+    ( ( MAKE-CLEAR ?auto_58 )
+      ( MAKE-CLEAR ?auto_57 ) )
+  )
+
+)
+
